@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kakeibo", "Kakeibo\Kakeibo.csproj", "{B7899440-EE35-4F69-960A-531E0FFAC20E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KakeiboTest", "KakeiboTest\KakeiboTest.csproj", "{972E9A37-85E0-42F1-BF39-C2668A070E54}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7899440-EE35-4F69-960A-531E0FFAC20E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7899440-EE35-4F69-960A-531E0FFAC20E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7899440-EE35-4F69-960A-531E0FFAC20E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7899440-EE35-4F69-960A-531E0FFAC20E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{972E9A37-85E0-42F1-BF39-C2668A070E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{972E9A37-85E0-42F1-BF39-C2668A070E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{972E9A37-85E0-42F1-BF39-C2668A070E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{972E9A37-85E0-42F1-BF39-C2668A070E54}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B12B14B4-2975-4633-87EF-7BE38B74F301}
+	EndGlobalSection
+EndGlobal

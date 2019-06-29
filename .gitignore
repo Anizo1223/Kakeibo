@@ -1,0 +1,9 @@
+.vs/
+.git/
+packages/
+Kakeibo/bin/
+Kakeibo/obj/
+Kakeibo/packages/
+KakeiboTest/bin/
+KakeiboTest/obj/
+KakeiboTest/packages/
