@@ -28,14 +28,14 @@
 		<TextBlock Margin="10" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" Text="金額" VerticalAlignment="Center"/>
 		<TextBox Margin="10"  Grid.Row="0" Grid.Column="5" Text="{Binding Path=Kakeibo.Kingaku, Mode=TwoWay}"/>
 		<TextBlock Margin="10" Grid.Row="0" Grid.Column="6" HorizontalAlignment="Center" Text="収支" VerticalAlignment="Center"/>
-		<ComboBox Margin="10"  Grid.Row="0" Grid.Column="7" ItemsSource="{Binding Path=ShushiList, Mode=OneWay}"
-		          SelectedItem="{Binding Path=Kakeibo.Shushi}"/>
+		<ComboBox Margin="10"  Grid.Row="0" Grid.Column="7" ItemsSource="{Binding Path=ShushiList, Mode=OneWay}" SelectedItem="{Binding Path=Kakeibo.Shushi}"/>
 
 		<Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="登録" Command="{Binding Path=RegColumnCommand,Mode=OneWay}" Width="100"/>
-	
+
+		<Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Content="選択した行を削除" Command="{Binding Path=DeleteColumnCommand, Mode=OneWay}" Width="100"/>
 
 		<ScrollViewer  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8" Margin="15" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-			<ListView ItemsSource="{Binding Path=KakeiboList}" GridViewColumnHeader.Click="ListHeader_Click">
+			<ListView ItemsSource="{Binding Path=KakeiboList, Mode=OneWay}" GridViewColumnHeader.Click="ListHeader_Click" SelectedItem="{Binding Path=SelectedKakeiboModel, Mode=TwoWay}">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="日付" DisplayMemberBinding="{Binding Path=Date, StringFormat=yyyy/MM/dd}" Width="100"/>
