@@ -32,9 +32,13 @@
 
 		<Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="登録" Command="{Binding Path=RegColumnCommand,Mode=OneWay}" Width="100"/>
 
-		<Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Content="選択した行を削除" Command="{Binding Path=DeleteColumnCommand, Mode=OneWay}" Width="100"/>
+		<Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Content="選択した行を修正" Command="{Binding Path=OpenFixDialogCommand, Mode=OneWay}" Width="100"
+						IsEnabled="{Binding Path=CanClick, Mode=TwoWay}"/>
 
-		<Button Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Content="月別出力" Command="{Binding Path=OpenSelectMonthCommand, Mode=OneWay}" Width="100"/>
+		<Button Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="2" Content="選択した行を削除" Command="{Binding Path=DeleteColumnCommand, Mode=OneWay}" Width="100"
+						IsEnabled="{Binding Path=CanClick, Mode=TwoWay}"/>
+
+		<Button Grid.Row="1" Grid.Column="6" Grid.ColumnSpan="2" Content="月別出力" Command="{Binding Path=OpenSelectMonthCommand, Mode=OneWay}" Width="100"/>
 
 		<ScrollViewer  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8" Margin="15" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 			<ListView ItemsSource="{Binding Path=KakeiboList, Mode=OneWay}" GridViewColumnHeader.Click="ListHeader_Click" SelectedItem="{Binding Path=SelectedKakeiboModel, Mode=TwoWay}">
