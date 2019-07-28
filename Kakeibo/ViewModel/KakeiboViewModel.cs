@@ -22,6 +22,8 @@ namespace Kakeibo.ViewModel
 				Date = DateTime.Now
 			};
 
+			this.CanClick = false;
+
 			this.InitializeKakeiboList();
 
 			this.ReadCSV();
@@ -41,6 +43,7 @@ namespace Kakeibo.ViewModel
 				this.m_kakeibo = value;
 				this.OnPropertyChanged("Kakeibo");
 			}
+
 		}
 
 		public ICommand RegColumnCommand { get; set; }
@@ -51,13 +54,33 @@ namespace Kakeibo.ViewModel
 
 		public ICommand OutputMonthlyCsvCommand { get; set; }
 
+		public ICommand OpenFixDialogCommand { get; set; }
+
+		public ICommand FixCommand { get; set; }
+
 		public ObservableCollection<KakeiboModel> KakeiboList { get; set; }
 
 		public ObservableCollection<string> ShushiList { get; set; }
 
-		public KakeiboModel SelectedKakeiboModel { get; set; }
+		private KakeiboModel m_selectedKakeiboModel;
+
+		public KakeiboModel SelectedKakeiboModel
+		{
+			get => this.m_selectedKakeiboModel;
+			set
+			{
+				this.CanClick = true;
+				this.m_selectedKakeiboModel = value;
+
+				this.OnPropertyChanged("CanClick");
+			}
+		}
+
+		private int m_selectedKakeiboIndex;
 
 		public DateTime SelectedMonth { get; set; }
+
+		public bool CanClick { get; set; }
 
 		private void RegColumn()
 		{
@@ -88,10 +111,13 @@ namespace Kakeibo.ViewModel
 
 		private void InitializeCommand()
 		{
-			this.RegColumnCommand = new DelegateCommand(() => this.RegColumn());
-			this.DeleteColumnCommand = new DelegateCommand(() => this.DeleteColumn());
-			this.OpenSelectMonthCommand = new DelegateCommand(() => this.OpenSelectMonthDialog());
+			this.RegColumnCommand = new DelegateCommand(this.RegColumn);
+			this.DeleteColumnCommand = new DelegateCommand(this.DeleteColumn);
+			this.OpenSelectMonthCommand = new DelegateCommand(this.OpenSelectMonthDialog);
 			this.OutputMonthlyCsvCommand = new DelegateCommand<object>(this.OutputMonthlyCsv);
+
+			this.OpenFixDialogCommand = new DelegateCommand(this.OpenFixDialog);
+			this.FixCommand = new DelegateCommand<object>(this.FixKakeiboItem);
 		}
 
 		private void WriteCSV()
@@ -99,6 +125,17 @@ namespace Kakeibo.ViewModel
 			var lines = this.Kakeibo.Date.ToString() + "," + this.Kakeibo.Meimoku + "," + this.Kakeibo.Kingaku.ToString() + "," + this.Kakeibo.Shushi;
 			var sw = new StreamWriter(@".\Kakeibo.csv", true);
 			sw.WriteLine(lines, Encoding.GetEncoding("utf-8"));
+			sw.Close();
+		}
+
+		private void OverWriteCSVAllLine()
+		{
+			var sw = new StreamWriter((new FileStream(@".\Kakeibo.csv", FileMode.Create)), Encoding.UTF8);
+			sw.WriteLine(this.ColumnName);
+			foreach (var line in this.KakeiboList)
+			{
+				sw.WriteLine(line.Date.ToString() + "," + line.Meimoku + "," + line.Kingaku.ToString() + "," + line.Shushi);
+			}
 			sw.Close();
 		}
 
@@ -143,6 +180,13 @@ namespace Kakeibo.ViewModel
 			dialog.Show();
 		}
 
+		private void OpenFixDialog()
+		{
+			this.m_selectedKakeiboIndex = this.KakeiboList.IndexOf(this.SelectedKakeiboModel);
+			var dialog = new FixKakeiboItemDialog(this);
+			dialog.Show();
+		}
+
 		private void OutputMonthlyCsv(object x)
 		{
 
@@ -171,6 +215,20 @@ namespace Kakeibo.ViewModel
 			sw.WriteLine(",合計," + this.Calc(newOutputList).ToString(), Encoding.GetEncoding("utf-8"));
 
 			sw.Close();
+
+			var window = (Window)x;
+			window.Close();
+		}
+
+		private void FixKakeiboItem(object x)
+		{
+			if (x == null)
+			{
+				return;
+			}
+
+			this.KakeiboList[this.m_selectedKakeiboIndex] = this.SelectedKakeiboModel;
+			this.OverWriteCSVAllLine();
 
 			var window = (Window)x;
 			window.Close();
