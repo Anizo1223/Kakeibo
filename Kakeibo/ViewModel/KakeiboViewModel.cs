@@ -24,7 +24,7 @@ namespace Kakeibo.ViewModel
 
 			this.ReadCSV();
 
-			this.RegColumnCommand = new DelegateCommand(() => this.RegColumn());
+			this.InitializeCommand();
 		}
 
 		private KakeiboModel m_kakeibo;
@@ -41,9 +41,13 @@ namespace Kakeibo.ViewModel
 
 		public ICommand RegColumnCommand { get; set; }
 
+		public ICommand DeleteColumnCommand { get; set; }
+
 		public ObservableCollection<KakeiboModel> KakeiboList { get; set; }
 
 		public ObservableCollection<string> ShushiList { get; set; }
+
+		public KakeiboModel SelectedKakeiboModel { get; set; }
 
 		private void RegColumn()
 		{
@@ -58,7 +62,12 @@ namespace Kakeibo.ViewModel
 				Meimoku = string.Empty,
 				Date = DateTime.Now
 			};
+		}
 
+		private void DeleteColumn()
+		{
+			this.KakeiboList.Remove(this.SelectedKakeiboModel);
+			this.RefreshKakeiboList();
 		}
 
 		private void InitializeKakeiboList()
@@ -67,11 +76,17 @@ namespace Kakeibo.ViewModel
 			this.ShushiList = new ObservableCollection<string> { "収入", "支出", };
 		}
 
+		private void InitializeCommand()
+		{
+			this.RegColumnCommand = new DelegateCommand(() => this.RegColumn());
+			this.DeleteColumnCommand = new DelegateCommand(() => this.DeleteColumn());
+		}
+
 		private void WriteCSV()
 		{
-			var lines = this.Kakeibo.Date.ToString() + "," + this.Kakeibo.Meimoku + "," + this.Kakeibo.Kingaku.ToString();
+			var lines = this.Kakeibo.Date.ToString() + "," + this.Kakeibo.Meimoku + "," + this.Kakeibo.Kingaku.ToString() + "," + this.Kakeibo.Shushi;
 			var sw = new StreamWriter(@".\Kakeibo.csv", true);
-			sw.WriteLine(lines);
+			sw.WriteLine(lines, Encoding.GetEncoding("utf-8"));
 			sw.Close();
 		}
 
@@ -80,7 +95,13 @@ namespace Kakeibo.ViewModel
 			try
 			{
 				var lines = File.ReadAllLines(@".\Kakeibo.csv", Encoding.GetEncoding("utf-8"));
-				foreach (var line in lines)
+
+				// 項目名は取り除く
+				var newLines = new List<string>();
+				newLines.AddRange(lines);
+				newLines.RemoveAt(0);
+
+				foreach (var line in newLines.ToArray())
 				{
 					var item = line.Split(',');
 					var KakeiboItem = new KakeiboModel
@@ -88,6 +109,7 @@ namespace Kakeibo.ViewModel
 						Date = DateTime.Parse(item[0]),
 						Meimoku = item[1],
 						Kingaku = int.Parse(item[2]),
+						Shushi = item[3],
 					};
 
 					this.KakeiboList.Add(KakeiboItem);
@@ -97,8 +119,15 @@ namespace Kakeibo.ViewModel
 			catch (Exception)
 			{
 				var sw = new StreamWriter(@".\Kakeibo.csv");
+				var columnName = "日付,内容,金額,収支";
+				sw.WriteLine(columnName);
 				sw.Close();
 			}
+		}
+
+		private void RefreshKakeiboList()
+		{
+
 		}
 	}
 }
