@@ -220,9 +220,16 @@
     </ApplicationDefinition>
     <Compile Include="Model\KakeiboConstModel.cs" />
     <Compile Include="ViewModel\KakeiboViewModel.cs" />
+    <Compile Include="View\FixKakeiboItemDialog.xaml.cs">
+      <DependentUpon>FixKakeiboItemDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SelectMonthlyDialog.xaml.cs">
       <DependentUpon>SelectMonthlyDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\FixKakeiboItemDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
