@@ -5,7 +5,9 @@ using System.IO;
 using System.Text;
 using System.Windows.Input;
 using Kakeibo.Model;
+using Kakeibo.View;
 using Prism.Commands;
+using System.Windows;
 
 namespace Kakeibo.ViewModel
 {
@@ -27,6 +29,8 @@ namespace Kakeibo.ViewModel
 			this.InitializeCommand();
 		}
 
+		private readonly string ColumnName = "日付,内容,金額,収支";
+
 		private KakeiboModel m_kakeibo;
 
 		public KakeiboModel Kakeibo
@@ -43,11 +47,17 @@ namespace Kakeibo.ViewModel
 
 		public ICommand DeleteColumnCommand { get; set; }
 
+		public ICommand OpenSelectMonthCommand { get; set; }
+
+		public ICommand OutputMonthlyCsvCommand { get; set; }
+
 		public ObservableCollection<KakeiboModel> KakeiboList { get; set; }
 
 		public ObservableCollection<string> ShushiList { get; set; }
 
 		public KakeiboModel SelectedKakeiboModel { get; set; }
+
+		public DateTime SelectedMonth { get; set; }
 
 		private void RegColumn()
 		{
@@ -80,6 +90,8 @@ namespace Kakeibo.ViewModel
 		{
 			this.RegColumnCommand = new DelegateCommand(() => this.RegColumn());
 			this.DeleteColumnCommand = new DelegateCommand(() => this.DeleteColumn());
+			this.OpenSelectMonthCommand = new DelegateCommand(() => this.OpenSelectMonthDialog());
+			this.OutputMonthlyCsvCommand = new DelegateCommand<object>(this.OutputMonthlyCsv);
 		}
 
 		private void WriteCSV()
@@ -119,11 +131,62 @@ namespace Kakeibo.ViewModel
 			catch (Exception)
 			{
 				var sw = new StreamWriter(@".\Kakeibo.csv");
-				var columnName = "日付,内容,金額,収支";
-				sw.WriteLine(columnName);
+				sw.WriteLine(this.ColumnName);
 				sw.Close();
 			}
 		}
+
+		private void OpenSelectMonthDialog()
+		{
+			this.SelectedMonth = DateTime.Now;
+			var dialog = new SelectMonthlyDialog(this);
+			dialog.Show();
+		}
+
+		private void OutputMonthlyCsv(object x)
+		{
+
+			if(x == null)
+			{
+				return;
+			}
+			var newOutputList = new List<KakeiboModel>();
+
+			var sw = new StreamWriter(@".\Kakeibo_" + this.SelectedMonth.Year.ToString() + "年" + this.SelectedMonth.Month.ToString() + "月.csv", true);
+			sw.WriteLine(this.ColumnName, Encoding.UTF8);
+			foreach (var list in KakeiboList)
+			{
+				if (!list.Date.HasValue)
+				{
+					continue;
+				}
+				if (list.Date?.Year == this.SelectedMonth.Year && list.Date?.Month == this.SelectedMonth.Month)
+				{
+					newOutputList.Add(list);
+					sw.WriteLine(list.Date.ToString() + "," + list.Meimoku + "," + list.Kingaku.ToString() + "," + list.Shushi);
+				}
+			}
+
+			sw.WriteLine();
+			sw.WriteLine(",合計," + this.Calc(newOutputList).ToString(), Encoding.GetEncoding("utf-8"));
+
+			sw.Close();
+
+			var window = (Window)x;
+			window.Close();
+		}
+
+		private int Calc(IReadOnlyCollection<KakeiboModel> kakeiboModel)
+		{
+			var result = 0;
+			foreach(var kakeibo in kakeiboModel)
+			{
+				if (kakeibo.Shushi == "収入")	result += kakeibo.Kingaku.Value;
+				else result -= kakeibo.Kingaku.Value;
+			}
+			return result;
+		}
+
 
 		private void RefreshKakeiboList()
 		{
